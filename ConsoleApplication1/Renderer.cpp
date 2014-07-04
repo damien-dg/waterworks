@@ -1,11 +1,7 @@
 #include "Renderer.h"
-#include "glfw3.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <random>
-#include <vector>
-#include "RenderObject.h"
-
 
 
 
@@ -17,6 +13,7 @@
 Renderer::Renderer(){
 
 	renderVector = {};
+	objectVector = {};
 	
 }
 
@@ -24,20 +21,62 @@ Renderer::Renderer(){
 void Renderer::render(std::vector<RenderObject> renderVector){
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	for (int i = 0; i < renderVector.size; i++){
+//	for (int i = 0; i < renderVector.size(); i++){
 		//remember to make draw function
 		//renderVector.at(i).draw
-	}
+//	}
 
 }
 
-//creates a window
-GLFWwindow* Renderer::CreateWindow(Vector2 size){
+//adds the object to the list of objects kept in memory
+void Renderer::addToObject(RenderObject obj){
+	
+	objectVector.push_back(obj);
+
+}
+
+//adds an object to the vector sent to the buffer (list of traingles to draw)
+void Renderer::addToRender(std::vector<glm::vec3> v2){
+
+	renderVector.reserve(renderVector.size() + v2.size());
+	renderVector.insert(renderVector.end(), v2.begin(), v2.end());
+
+}
+
+/**creates a window**/
+GLFWwindow* Renderer::CreateWindow(glm::vec2 size){
 	
 	GLFWwindow *window;
 	window = glfwCreateWindow(size.x, size.y, "Simple example", NULL, NULL);
+	glfwMakeContextCurrent(window);
 	return window;
 }
+
+/**creates an quilateral traingle at given position and size**/
+std::vector<glm::vec3> Renderer::createTriangle(glm::vec3 origin, float size){
+
+	float r = size / 2;
+	std::vector<glm::vec3> result = { glm::vec3(origin.x - 0.866*size, origin.y - r, origin.z),
+									  glm::vec3(origin.x, origin.y + size, origin.z), 
+									  glm::vec3(origin.x + 0.866*size, origin.y - r, origin.z) };
+	return result;
+}
+/**return vector of vertices to be rendered**/
+std::vector<glm::vec3> Renderer::getRenderVector(){
+	return renderVector;
+}
+
+std::vector<RenderObject> Renderer::getObjectVector(){
+	return objectVector;
+}
+
+RenderObject Renderer::createObject(glm::vec3 position, std::vector<glm::vec3> shape){
+	RenderObject newObject = RenderObject(position, shape);
+	addToObject(newObject);
+	addToRender(newObject.shape);
+	return newObject;
+}
+
 
 
 

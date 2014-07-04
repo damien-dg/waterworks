@@ -24,6 +24,12 @@
     <ClCompile Include="RenderObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="FirstShader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="controls.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="RenderObject.h">
@@ -33,6 +39,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Renderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FirstShader.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="controls.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
