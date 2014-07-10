@@ -9,6 +9,7 @@
 #include <gtc/type_ptr.hpp>
 
 
+
 #define GLEW_STATIC
 
 
@@ -17,7 +18,7 @@ int main(void)
 
 	
 
-	Renderer renderer = Renderer::Renderer();
+	Renderer renderer = Renderer();
 	glm::vec2 vector;
 	vector.x = 1280.f;
 	vector.y = 720.f;
@@ -67,17 +68,10 @@ int main(void)
 	
 	//individual trianges to be added to the vector
 	
-	std::vector<glm::vec3> vecA = renderer.createTriangle(glm::vec3(3, 3, -20), 1.f);
-	std::vector<glm::vec3> vecB = renderer.createTriangle(glm::vec3(0, 0, 0), 3.f);
-	
-
-	
-	
-//	triangles.insert(triangles.end(), vec1.begin(), vec1.end());
-//	triangles.insert(triangles.end(), vec2.begin(), vec2.end());
-	RenderObject firstTriangle = renderer.createObject(glm::vec3(3, 3, -20), renderer.createTriangle(glm::vec3(3, 3, -20), 1.f));
-	RenderObject secondTriangle = renderer.createObject(glm::vec3(0, 0, 0), renderer.createTriangle(glm::vec3(0, 0, 0), 3.f));
-
+	RenderObject firstTriangle = renderer.createTriangle(glm::vec3(3, 3, -20), 1.f);
+	RenderObject secondTriangle = renderer.createTriangle(glm::vec3(0, 0, 0), 3.f);
+	RenderObject firstSquare = renderer.createSquare(glm::vec3(-4, -3, 0), 2.f);
+	RenderObject firstRectangle = renderer.createRectangle(glm::vec3(0, -10, 0), 400, 4, 1);
 
 
 	
@@ -131,12 +125,22 @@ int main(void)
 	
 	do{
 		timeCounter++;
-
+		
 		computeMatricesFromInputs(window);
 		View = getViewMatrix();
 		Projection = getProjectionMatrix();
+		
+		
+		printf("%d\n", renderer.getObjectVector().size());
+	
+		renderer.updateObjects();
 		for (RenderObject i : renderer.getObjectVector()){
+			//printf("%d \n", timeCounter);
+		
+			i.printPropreties();
+		
 			glm::mat4 MVP = Projection * View * i.getModelMatrix();
+
 			// Send our transformation to the currently bound shader,
 			// in the "MVP" uniform
 			// For each model you render, since the MVP will be different (at least the M part)
@@ -146,6 +150,7 @@ int main(void)
 			float fourier1 = approxTriangleWave((timeCounter - 100) / 200.0f, 1.5f, 0.33f);
 			float fourier2 = approxTriangleWave((timeCounter + 10) / 200.0f, 1.5f, 0.33f);
 			float fourier3 = approxTriangleWave((timeCounter + 600)/ 200.0f, 1.5f, 0.33f);
+			
 
 			if (timeCounter % 1 == 0){
 			
@@ -154,8 +159,8 @@ int main(void)
 					randomColorValue.z = ( fourier3 );
 			
 			
-				glUniform3f(color, randomColorValue.x, randomColorValue.y, randomColorValue.z);
-			
+				//glUniform3f(color, randomColorValue.x, randomColorValue.y, randomColorValue.z);
+					glUniform3f(color, 1.f, 1.f, 1.f);
 			}
 		}
 		//use the shaders

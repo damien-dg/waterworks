@@ -1,5 +1,5 @@
 #version 330 core
-
+const float PI = 3.14159265;
 out vec3 color;
 uniform vec3 time;
  
