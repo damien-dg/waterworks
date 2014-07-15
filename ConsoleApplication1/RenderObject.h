@@ -16,22 +16,24 @@ private:
 	
 public:
 
-	void updatePosition();
-	void updateVelocity();
-
 	Physics rigidBody;
-
-	void updatePhysics();
-	void updateModelMatrix();
-	void printPropreties();
-
-	glm::vec3 getPosition();
+	std::vector<glm::vec3> shape;
+	
 
 	RenderObject();
 	RenderObject(glm::vec3 position, std::vector<glm::vec3> shape);
 
-	glm::mat4 getModelMatrix(); 
+
+	glm::mat4 getModelMatrix();
+	glm::vec3 getPosition();
+
+	void updatePosition();
+	void updateVelocity();
+	void updatePhysics();
+	void updateModelMatrix();
+	void printPropreties();
+	void removeGravity();
+
 	
-	std::vector<glm::vec3> shape;
 };
 

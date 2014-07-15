@@ -37,8 +37,10 @@ void RenderObject::updateVelocity(){
 }
 
 void RenderObject::updatePhysics(){
-	
-	rigidBody.updateAcceleration(glm::vec3{ 0.f, -0.03f, 0.f });
+	if (!rigidBody.gravImmune){
+		
+		rigidBody.updateAcceleration(glm::vec3{ 0.f, -10.00f, 0.f });
+	}
 	updateVelocity();
 	updatePosition();
 
@@ -58,4 +60,9 @@ void RenderObject::printPropreties(){
 	printf("Acceleration: %f, %f, %f\n", rigidBody.acceleration.x, rigidBody.acceleration.y, rigidBody.acceleration.z);
 	printf("Velocity: %f, %f, %f\n", rigidBody.velocity.x, rigidBody.velocity.y, rigidBody.velocity.z);
 
+
+}
+
+void RenderObject::removeGravity(){
+	rigidBody.zeroG();
 }

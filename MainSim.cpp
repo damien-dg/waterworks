@@ -72,9 +72,11 @@ int main(void)
 	RenderObject secondTriangle = renderer.createTriangle(glm::vec3(0, 0, 0), 3.f);
 	RenderObject firstSquare = renderer.createSquare(glm::vec3(-4, -3, 0), 2.f);
 	RenderObject firstRectangle = renderer.createRectangle(glm::vec3(0, -10, 0), 400, 4, 1);
+	renderer.objectVector.at(0).removeGravity();
+//	renderer.objectVector.at(1).removeGravity();
+//	renderer.objectVector.at(2).removeGravity();
+//	renderer.objectVector.at(3).removeGravity();
 
-
-	
 	//load the shaders
 	GLuint programID = LoadShaders("SimpleVertexShader.vertexshader", "./SimpleFragmentShader.fragmentshader");
 
@@ -131,13 +133,13 @@ int main(void)
 		Projection = getProjectionMatrix();
 		
 		
-		printf("%d\n", renderer.getObjectVector().size());
+	//	printf("%d\n", renderer.getObjectVector().size());
 	
 		renderer.updateObjects();
 		for (RenderObject i : renderer.getObjectVector()){
 			//printf("%d \n", timeCounter);
 		
-			i.printPropreties();
+		//	i.printPropreties();
 		
 			glm::mat4 MVP = Projection * View * i.getModelMatrix();
 
@@ -175,7 +177,9 @@ int main(void)
 		
 		***/
 		glEnableVertexAttribArray(0);
-	//	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+
+		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+		
 		glVertexAttribPointer(
 			0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
 			3,                  // size (3-d)
@@ -186,8 +190,21 @@ int main(void)
 			);
 
 		// Draw the triangle !
-		glDrawArrays(GL_TRIANGLES, 0, renderer.getRenderVector().size()); // Starting from vertex 0; 3 vertices total -> 1 triangle
-
+		int offset = 0;
+		for (int i = 0; i<renderer.getObjectVector().size(); i++)
+		{
+			//printf("DRAWING\n");
+			
+			glDrawArrays(GL_TRIANGLES, offset, renderer.getObjectVector().at(i).shape.size()); // Starting from vertex 0; 3 vertices total -> 1 triangle
+			offset += renderer.getObjectVector().at(i).shape.size();
+		
+			glm::mat4 MVP = Projection * View * renderer.getObjectVector().at(i).getModelMatrix();
+			// Send our transformation to the currently bound shader,
+			// in the "MVP" uniform
+			// For each model you render, since the MVP will be different (at least the M part)
+			glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
+		}
+		offset = 0;
 		glDisableVertexAttribArray(0);
 		
 
