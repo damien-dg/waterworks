@@ -24,25 +24,25 @@ glm::mat4 RenderObject::getModelMatrix(){
 	return modelMatrix;
 }
 
-void RenderObject::updatePosition(){
+void RenderObject::updatePosition(int timeElapsed){
 	
-	position = rigidBody.calculatePosition(position, rigidBody.velocity, rigidBody.acceleration);
+	position = rigidBody.calculatePosition(position, rigidBody.velocity, rigidBody.acceleration, timeElapsed);
 
 }
 
-void RenderObject::updateVelocity(){
+void RenderObject::updateVelocity(int timeElapsed){
 
-	rigidBody.updateVelocity();
+	rigidBody.updateVelocity(timeElapsed);
 	
 }
 
-void RenderObject::updatePhysics(){
+void RenderObject::updatePhysics(int timeElapsed){
 	if (!rigidBody.gravImmune){
 		
 		rigidBody.updateAcceleration(glm::vec3{ 0.f, -10.00f, 0.f });
 	}
-	updateVelocity();
-	updatePosition();
+	updateVelocity(timeElapsed);
+	updatePosition(timeElapsed);
 
 }
 

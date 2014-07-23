@@ -69,7 +69,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;_WIN32;_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>C:\Program Files %28x86%29\GLFW\include\GLFW;D:\glew-1.10.0-win32\glew-1.10.0\lib;D:\glew-1.10.0-win32\glew-1.10.0\include;D:\glm\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>
@@ -87,6 +87,7 @@
     <ClCompile Include="..\MainSim.cpp" />
     <ClCompile Include="controls.cpp" />
     <ClCompile Include="FirstShader.cpp" />
+    <ClCompile Include="Loader.cpp" />
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RenderObject.cpp" />
@@ -94,6 +95,7 @@
   <ItemGroup>
     <ClInclude Include="controls.h" />
     <ClInclude Include="FirstShader.hpp" />
+    <ClInclude Include="Loader.h" />
     <ClInclude Include="Math.h" />
     <ClInclude Include="Physics.h" />
     <ClInclude Include="Renderer.h" />

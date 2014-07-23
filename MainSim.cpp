@@ -1,10 +1,12 @@
+
 #include <GL/glew.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <chrono>
 #include <time.h>
 #include <random>
 #include "ConsoleApplication1/controls.h"
-#include "ConsoleApplication1/Renderer.h"
+#include "ConsoleApplication1/Loader.h"
 #include "ConsoleApplication1/FirstShader.hpp"
 #include <gtc/type_ptr.hpp>
 
@@ -67,16 +69,20 @@ int main(void)
 	//render vector
 	
 	//individual trianges to be added to the vector
+	Loader mainLoader = Loader();
+	renderer.createObject(glm::vec3(1.f, 1.f, 1.f), mainLoader.loadOBJ(renderer, "C:/Users/Damien/Desktop/Suzanne.obj"));
+//	RenderObject firstTriangle = renderer.createTriangle(glm::vec3(3, 3, -20), 1.f);
+//	RenderObject secondTriangle = renderer.createTriangle(glm::vec3(0, 0, 0), 3.f);
+//	RenderObject firstSquare = renderer.createSquare(glm::vec3(-4, -3, 0), 2.f);
+//	RenderObject firstRectangle = renderer.createRectangle(glm::vec3(0, -10, 0), 400, 4, 1);
 	
-	RenderObject firstTriangle = renderer.createTriangle(glm::vec3(3, 3, -20), 1.f);
-	RenderObject secondTriangle = renderer.createTriangle(glm::vec3(0, 0, 0), 3.f);
-	RenderObject firstSquare = renderer.createSquare(glm::vec3(-4, -3, 0), 2.f);
-	RenderObject firstRectangle = renderer.createRectangle(glm::vec3(0, -10, 0), 400, 4, 1);
 	renderer.objectVector.at(0).removeGravity();
 //	renderer.objectVector.at(1).removeGravity();
 //	renderer.objectVector.at(2).removeGravity();
 //	renderer.objectVector.at(3).removeGravity();
-
+	printf("%f, %f, %f\n", renderer.objectVector.at(0).getPosition().x, renderer.objectVector.at(0).getPosition().y, renderer.objectVector.at(0).getPosition().z);
+	printf("%d\n", renderer.objectVector.at(0).rigidBody.gravImmune);
+	
 	//load the shaders
 	GLuint programID = LoadShaders("SimpleVertexShader.vertexshader", "./SimpleFragmentShader.fragmentshader");
 
@@ -125,46 +131,20 @@ int main(void)
 	glm::vec3 randomColorValue = { 0.0f, 0.0f, 0.0f };
 	int timeCounter = 0;
 	
-	do{
-		timeCounter++;
-		
-		computeMatricesFromInputs(window);
-		View = getViewMatrix();
-		Projection = getProjectionMatrix();
-		
-		
-	//	printf("%d\n", renderer.getObjectVector().size());
+	typedef std::chrono::high_resolution_clock clock;
 	
-		renderer.updateObjects();
-		for (RenderObject i : renderer.getObjectVector()){
-			//printf("%d \n", timeCounter);
-		
-		//	i.printPropreties();
-		
-			glm::mat4 MVP = Projection * View * i.getModelMatrix();
+	int lastTime = std::chrono::duration_cast<std::chrono::milliseconds>(clock::now().time_since_epoch()).count();
+	int frameCounter = std::chrono::duration_cast<std::chrono::milliseconds>(clock::now().time_since_epoch()).count();
 
-			// Send our transformation to the currently bound shader,
-			// in the "MVP" uniform
-			// For each model you render, since the MVP will be different (at least the M part)
-			glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
-		
-		
-			float fourier1 = approxTriangleWave((timeCounter - 100) / 200.0f, 1.5f, 0.33f);
-			float fourier2 = approxTriangleWave((timeCounter + 10) / 200.0f, 1.5f, 0.33f);
-			float fourier3 = approxTriangleWave((timeCounter + 600)/ 200.0f, 1.5f, 0.33f);
-			
 
-			if (timeCounter % 1 == 0){
-			
-					randomColorValue.x = ( fourier1 );
-					randomColorValue.y = ( fourier2 );
-					randomColorValue.z = ( fourier3 );
-			
-			
-				//glUniform3f(color, randomColorValue.x, randomColorValue.y, randomColorValue.z);
-					glUniform3f(color, 1.f, 1.f, 1.f);
-			}
-		}
+	do{
+		
+		
+		int currentTime = std::chrono::duration_cast<std::chrono::milliseconds>(clock::now().time_since_epoch()).count();
+		int elapsed = currentTime - lastTime;
+	
+		
+		
 		//use the shaders
 
 		//first, clear screen
@@ -189,22 +169,52 @@ int main(void)
 			(void*)0            // array buffer offset
 			);
 
-		// Draw the triangle !
+		
 		int offset = 0;
+		computeMatricesFromInputs(window);
+		View = getViewMatrix();
+		Projection = getProjectionMatrix();
+
+		//update all objects BEFORE rendering
+		renderer.updateObjects(elapsed);
+
+		//color shader
+		glUniform3f(color, 1.f, 1.f, 1.f);
 		for (int i = 0; i<renderer.getObjectVector().size(); i++)
 		{
 			//printf("DRAWING\n");
-			
-			glDrawArrays(GL_TRIANGLES, offset, renderer.getObjectVector().at(i).shape.size()); // Starting from vertex 0; 3 vertices total -> 1 triangle
-			offset += renderer.getObjectVector().at(i).shape.size();
-		
 			glm::mat4 MVP = Projection * View * renderer.getObjectVector().at(i).getModelMatrix();
 			// Send our transformation to the currently bound shader,
 			// in the "MVP" uniform
 			// For each model you render, since the MVP will be different (at least the M part)
 			glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
+
+			//draw each shape one by one
+			glDrawArrays(GL_TRIANGLES, offset, renderer.getObjectVector().at(i).shape.size()); 
+			//update the offset so the next draw call knows where to start
+			offset += renderer.getObjectVector().at(i).shape.size();
+		
+			
+		
+			
 		}
+
+		timeCounter++;
+
+		//framerate counter
+
+		if (currentTime - frameCounter > 1000)
+		{
+
+			frameCounter = std::chrono::duration_cast<std::chrono::milliseconds>(clock::now().time_since_epoch()).count();
+			printf("%d\n", timeCounter);
+			timeCounter = 0;
+		}
+
+		lastTime = currentTime;
 		offset = 0;
+
+		//disable vertex attribute
 		glDisableVertexAttribArray(0);
 		
 

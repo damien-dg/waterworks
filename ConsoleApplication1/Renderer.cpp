@@ -107,12 +107,13 @@ RenderObject Renderer::createObject(glm::vec3 position, std::vector<glm::vec3> s
 }
 
 /**updates objects within the object vector**/
-void Renderer::updateObjects(){
+void Renderer::updateObjects(int timeElapsed){
 
+	
 
 	for (int i = 0; i < objectVector.size(); i++){
 		
-		objectVector.at(i).updatePhysics();
+		objectVector.at(i).updatePhysics(timeElapsed);
 		objectVector.at(i).updateModelMatrix();
 
 	}

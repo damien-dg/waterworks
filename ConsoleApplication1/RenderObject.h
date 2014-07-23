@@ -27,9 +27,9 @@ public:
 	glm::mat4 getModelMatrix();
 	glm::vec3 getPosition();
 
-	void updatePosition();
-	void updateVelocity();
-	void updatePhysics();
+	void updatePosition(int timeElapsed);
+	void updateVelocity(int timeElpased);
+	void updatePhysics(int timeElapsed);
 	void updateModelMatrix();
 	void printPropreties();
 	void removeGravity();

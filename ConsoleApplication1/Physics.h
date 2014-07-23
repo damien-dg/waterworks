@@ -16,15 +16,15 @@ private:
 
 public:
 	bool gravImmune;
-	float time = 0.00333f;
+	int time = 0;
 	glm::vec3 velocity;
 	glm::vec3 acceleration;
 
 	Physics();
-
-	glm::vec3 calculatePosition(glm::vec3 position, glm::vec3 velocity, glm::vec3 acceleration);
-	void updateVelocity();
+	
+	glm::vec3 calculatePosition(glm::vec3 position, glm::vec3 velocity, glm::vec3 acceleration, int frameTime);
+	void updateVelocity(int frameTime);
 	void updateAcceleration(glm::vec3);
 	void zeroG();
-	 
+	void setTime(int newTime);
 };

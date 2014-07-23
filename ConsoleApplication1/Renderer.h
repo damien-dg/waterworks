@@ -32,7 +32,7 @@ public:
 
 	std::vector<glm::vec3> getRenderVector();
 	std::vector<RenderObject> getObjectVector();
-	void updateObjects();
+	void updateObjects(int timeElapsed);
 	
 };
 
